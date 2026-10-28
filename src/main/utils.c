@@ -30,7 +30,9 @@ Graph* create_graph(int n) {
 }
 
 void add_edge(Graph* g, int src, int dest) {
-    if (g == NULL) return;
+    if (g == NULL){
+        return;
+    }
     if (src < 0 || src >= g->num_of_vertices || dest < 0 || dest >= g->num_of_vertices) {
         printf("Error: invalid vertex indices (%d, %d)\n", src, dest);
         return;
@@ -92,7 +94,9 @@ Graph* load_matrix(const char* filename) {
         return NULL;
     }
     while (fgets(line, sizeof(line), f) != NULL) {
-        if (line[0] != '%') break;
+        if (line[0] != '%'){
+            break;
+        }
     }
     int rows, cols, entries;
     if (sscanf(line, "%d %d %d", &rows, &cols, &entries) != 3) {
@@ -114,7 +118,8 @@ Graph* load_matrix(const char* filename) {
             fclose(f);
             return NULL;
         }
-        src--; dest--;
+        src--;
+        dest--;
         if (is_symmetric) {
             add_edge(graph, src, dest);
         } else {
@@ -136,7 +141,9 @@ Graph* load_matrix(const char* filename) {
 }
 
 CSRMatrix* graph_to_csr(Graph* graph) {
-    if (graph == NULL) return NULL;
+    if (graph == NULL){
+        return NULL;
+    }
     CSRMatrix* csr = (CSRMatrix*)malloc(sizeof(CSRMatrix));
     csr->n = graph->num_of_vertices;
     csr->row_ptr = (int*)malloc((graph->num_of_vertices + 1) * sizeof(int));
@@ -168,7 +175,9 @@ CSRMatrix* graph_to_csr(Graph* graph) {
     for (int i = 0; i < graph->num_of_vertices; i++) {
         int start = csr->row_ptr[i];
         int len   = csr->row_ptr[i + 1] - start;
-        if (len <= 1) continue;
+        if (len <= 1){
+            continue;
+        }
 
         int sorted = 1;
         for (int j = start + 1; j < start + len; j++) {
@@ -205,9 +214,13 @@ int find_max_degree_vertex(Graph* graph) {
 }
 
 void find_top_degree_vertices(Graph* g, int k, int* out) {
-    if (g == NULL || out == NULL || k <= 0) return;
+    if (g == NULL || out == NULL || k <= 0){
+        return;
+    }
     int n = g->num_of_vertices;
-    if (k > n) k = n;
+    if (k > n){
+        k = n;
+    }
     int* degrees = (int*)malloc(n * sizeof(int));
     for (int i = 0; i < n; i++) {
         int degree = 0;
@@ -232,7 +245,9 @@ void find_top_degree_vertices(Graph* g, int k, int* out) {
 }
 
 void delete_graph(Graph* g) {
-    if (g == NULL) return;
+    if (g == NULL){
+        return;
+    }
     for (int i = 0; i < g->num_of_vertices; i++) {
         Node* current = g->adjLists[i];
         while (current != NULL) {
@@ -246,7 +261,9 @@ void delete_graph(Graph* g) {
 }
 
 void delete_csr(CSRMatrix* csr) {
-    if (csr == NULL) return;
+    if (csr == NULL){
+        return;
+    }
     free(csr->row_ptr);
     free(csr->col_idx);
     free(csr);
@@ -271,7 +288,9 @@ void print_level_stats(const int* level, int n, const char* graph_name, int true
 
     int* width = (int*)calloc(max_level + 1, sizeof(int));
     for (int i = 0; i < n; i++) {
-        if (level[i] >= 0) width[level[i]]++;
+        if (level[i] >= 0){
+            width[level[i]]++;
+        }
     }
 
     int max_width = 0;
