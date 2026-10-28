@@ -42,3 +42,5 @@ core.*
 
 # Local graphs (если не хочешь коммитить все .mtx в LFS)
 # graphs/
+Testing/
+Testing/Temporary/

@@ -238,7 +238,9 @@ void print_level_stats(const int* level, int n, const char* graph_name, int true
             unreachable++;
         } else {
             reachable++;
-            if (level[i] > max_level) max_level = level[i];
+            if (level[i] > max_level){
+                max_level = level[i];
+            }
         }
     }
 
@@ -249,7 +251,9 @@ void print_level_stats(const int* level, int n, const char* graph_name, int true
 
     int max_width = 0;
     for (int l = 0; l <= max_level; l++) {
-        if (width[l] > max_width) max_width = width[l];
+        if (width[l] > max_width) {
+            max_width = width[l];
+        }
     }
 
     if (out_max_width != NULL) {
@@ -266,7 +270,6 @@ void print_level_stats(const int* level, int n, const char* graph_name, int true
     printf("   unreachable = %d (%.1f%%)\n", unreachable, 100.0 * unreachable / n);
     printf("   max_level   = %d\n", max_level);
     printf("   max_width   = %d\n", max_width);
-    printf("   max_width/|V| = %.2f%%\n", 100.0 * max_width / n);
     printf("   avg_degree (|E|/|V|) = %.2f\n", avg_degree);
 
     printf(" RECOMMENDATION: ");

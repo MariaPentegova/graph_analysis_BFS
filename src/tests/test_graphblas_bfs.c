@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#undef NDEBUG
 #include <assert.h>
 #include "test_utils.h"
 #include "../main/graphblas_bfs.h"
