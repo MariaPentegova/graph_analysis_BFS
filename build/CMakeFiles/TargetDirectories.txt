@@ -1,8 +1,0 @@
-/home/masha/graph_blas_bfs-2/build/CMakeFiles/bfs_analysis.dir
-/home/masha/graph_blas_bfs-2/build/CMakeFiles/bfs_benchmark.dir
-/home/masha/graph_blas_bfs-2/build/CMakeFiles/test_classic_bfs.dir
-/home/masha/graph_blas_bfs-2/build/CMakeFiles/test_graphblas_bfs.dir
-/home/masha/graph_blas_bfs-2/build/CMakeFiles/test_comparison.dir
-/home/masha/graph_blas_bfs-2/build/CMakeFiles/test.dir
-/home/masha/graph_blas_bfs-2/build/CMakeFiles/edit_cache.dir
-/home/masha/graph_blas_bfs-2/build/CMakeFiles/rebuild_cache.dir

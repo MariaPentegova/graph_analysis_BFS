@@ -1,1 +1,0 @@
-/usr/bin/cc -Wl,--dependency-file=CMakeFiles/bfs_analysis.dir/link.d CMakeFiles/bfs_analysis.dir/src/main/main.c.o CMakeFiles/bfs_analysis.dir/src/main/utils.c.o CMakeFiles/bfs_analysis.dir/src/main/classic_bfs.c.o CMakeFiles/bfs_analysis.dir/src/main/graphblas_bfs.c.o -o bfs_analysis  -Wl,-rpath,/usr/local/lib /usr/local/lib/libgraphblas.so -lm -lpthread

@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/bfs_benchmark.dir/link.d CMakeFiles/bfs_benchmark.dir/src/main/benchmark.cpp.o CMakeFiles/bfs_benchmark.dir/src/main/utils.c.o CMakeFiles/bfs_benchmark.dir/src/main/classic_bfs.c.o CMakeFiles/bfs_benchmark.dir/src/main/graphblas_bfs.c.o -o bfs_benchmark  -Wl,-rpath,/usr/local/lib /usr/local/lib/libgraphblas.so -lm -lpthread
