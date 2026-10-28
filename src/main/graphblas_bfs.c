@@ -46,9 +46,7 @@ void graphblas_finalize(void) {
 }
 
 int graphblas_build_matrix(CSRMatrix* csr, void** A_out) {
-    if (csr == NULL || A_out == NULL) {
-        return -1;
-    }
+    if (csr == NULL || A_out == NULL) return -1;
     if (!g_initialized) {
         fprintf(stderr, "Error: graphblas_init() must be called before graphblas_build_matrix()\n");
         return -1;
@@ -79,20 +77,6 @@ int graphblas_build_matrix(CSRMatrix* csr, void** A_out) {
         vals[i] = true;
     }
 
-    for (GrB_Index i = 0; i < n; i++) {
-        GrB_Index start = row_ptr[i];
-        GrB_Index end = row_ptr[i+1];
-        for (GrB_Index j = start; j < end; j++) {
-            for (GrB_Index k = j + 1; k < end; k++) {
-                if (col_idx[j] > col_idx[k]) {
-                    GrB_Index temp = col_idx[j];
-                    col_idx[j] = col_idx[k];
-                    col_idx[k] = temp;
-                }
-            }
-        }
-    }
-
     GrB_Index Ap_size = (n + 1) * sizeof(GrB_Index);
     GrB_Index Aj_size = total_edges * sizeof(GrB_Index);
     GrB_Index Ax_size = total_edges * sizeof(bool);
@@ -107,8 +91,8 @@ int graphblas_build_matrix(CSRMatrix* csr, void** A_out) {
                                           Ap_size,
                                           Aj_size,
                                           Ax_size,
-                                          false,
-                                          false,
+                                          false,   // iso
+                                          false,   // jumbled
                                           NULL);
 
     if (info != GrB_SUCCESS) {

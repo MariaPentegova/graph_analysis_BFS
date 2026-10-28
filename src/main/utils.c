@@ -4,7 +4,13 @@
 #include <time.h>
 #include "utils.h"
 
-Graph* create_graph(int n){
+static int compare_ints(const void* a, const void* b) {
+    int ia = *(const int*)a;
+    int ib = *(const int*)b;
+    return (ia > ib) - (ia < ib);
+}
+
+Graph* create_graph(int n) {
     Graph* graph = (Graph*)malloc(sizeof(Graph));
     if (graph == NULL) {
         printf("Error: failed to allocate memory for the graph\n");
@@ -158,6 +164,24 @@ CSRMatrix* graph_to_csr(Graph* graph) {
         }
     }
     free(current_pos);
+
+    for (int i = 0; i < graph->num_of_vertices; i++) {
+        int start = csr->row_ptr[i];
+        int len   = csr->row_ptr[i + 1] - start;
+        if (len <= 1) continue;
+
+        int sorted = 1;
+        for (int j = start + 1; j < start + len; j++) {
+            if (csr->col_idx[j] < csr->col_idx[j - 1]) {
+                sorted = 0;
+                break;
+            }
+        }
+        if (!sorted) {
+            qsort(&csr->col_idx[start], (size_t)len, sizeof(int), compare_ints);
+        }
+    }
+
     return csr;
 }
 
@@ -227,6 +251,7 @@ void delete_csr(CSRMatrix* csr) {
     free(csr->col_idx);
     free(csr);
 }
+
 
 void print_level_stats(const int* level, int n, const char* graph_name, int true_edges, int* out_max_width, int* out_max_level) {
     int max_level = 0;

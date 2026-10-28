@@ -21,9 +21,6 @@ typedef struct Node Node;
 typedef struct Graph Graph;
 typedef struct CSRMatrix CSRMatrix;
 
-extern int g_last_max_width;
-extern int g_last_max_level;
-
 Graph* create_graph(int n);
 void add_edge(struct Graph* g, int src, int dest);
 Graph* load_matrix(const char* filename);
