@@ -1,0 +1,248 @@
+Запуск: flickr_abs_25000_density_35
+GraphBLAS initialized
+Benchmark: ../graphs/flickr_abs_25000_density_35.mtx
+Graph loaded: 25000 vertices, 875000 edges
+Start vertex: 22327
+Sources: 22327 2204 5935 3149 
+Boost BGL: graph construction (performed once, not included in the measurements below): 0.010636 сек
+GraphBLAS: matrix construction (performed once, not included in the measurements below): 0.004081 сек
+
+ Level statistics for ../graphs/flickr_abs_25000_density_35.mtx (single-source from max-degree):
+   reachable   = 25000 (100.0%)
+   unreachable = 0 (0.0%)
+   max_level   = 3
+   max_width   = 22302
+   max_width / |V|)       = 89.21%
+
+Running 10 iterations...
+
+ Results (microseconds) 
+Metric                    | Avg    | Min    | Max
+--------------------------|--------|--------|--------
+Classic Parent BFS        |   1082 |   1071 |   1096
+Boost BGL Parent BFS      |   1932 |   1917 |   1962
+Classic Multisource BFS   |   1072 |   1065 |   1104
+GraphBLAS Parent BFS       |   3056 |   2650 |   3247
+GraphBLAS Multisource BFS |   2792 |   2273 |   3498
+
+ Speedups 
+GraphBLAS Parent / Classic Parent: 0.35x
+Boost BGL Parent / Classic Parent: 0.56x
+GraphBLAS Multisource / Classic Multisource: 0.38x
+Запуск: flickr_abs_40000_density_35
+GraphBLAS initialized
+Benchmark: ../graphs/flickr_abs_40000_density_35.mtx
+Graph loaded: 40000 vertices, 1400000 edges
+Start vertex: 22327
+Sources: 22327 10697 5935 2204 
+Boost BGL: graph construction (performed once, not included in the measurements below): 0.018409 сек
+GraphBLAS: matrix construction (performed once, not included in the measurements below): 0.006960 сек
+
+ Level statistics for ../graphs/flickr_abs_40000_density_35.mtx (single-source from max-degree):
+   reachable   = 40000 (100.0%)
+   unreachable = 0 (0.0%)
+   max_level   = 3
+   max_width   = 35542
+   max_width / |V|)       = 88.86%
+
+Running 10 iterations...
+
+ Results (microseconds) 
+Metric                    | Avg    | Min    | Max
+--------------------------|--------|--------|--------
+Classic Parent BFS        |   1995 |   1974 |   2019
+Boost BGL Parent BFS      |   3345 |   3255 |   3534
+Classic Multisource BFS   |   2025 |   1963 |   2174
+GraphBLAS Parent BFS       |   3545 |   3299 |   3748
+GraphBLAS Multisource BFS |   3680 |   3074 |   4510
+
+ Speedups 
+GraphBLAS Parent / Classic Parent: 0.56x
+Boost BGL Parent / Classic Parent: 0.60x
+GraphBLAS Multisource / Classic Multisource: 0.55x
+Запуск: flickr_abs_60000_density_35
+GraphBLAS initialized
+Benchmark: ../graphs/flickr_abs_60000_density_35.mtx
+Graph loaded: 60000 vertices, 2100000 edges
+Start vertex: 22327
+Sources: 22327 44038 10697 58744 
+Boost BGL: graph construction (performed once, not included in the measurements below): 0.030057 сек
+GraphBLAS: matrix construction (performed once, not included in the measurements below): 0.010199 сек
+
+ Level statistics for ../graphs/flickr_abs_60000_density_35.mtx (single-source from max-degree):
+   reachable   = 60000 (100.0%)
+   unreachable = 0 (0.0%)
+   max_level   = 3
+   max_width   = 50880
+   max_width / |V|)       = 84.80%
+
+Running 10 iterations...
+
+ Results (microseconds) 
+Metric                    | Avg    | Min    | Max
+--------------------------|--------|--------|--------
+Classic Parent BFS        |   3395 |   3355 |   3485
+Boost BGL Parent BFS      |   5278 |   5255 |   5309
+Classic Multisource BFS   |   3377 |   3347 |   3408
+GraphBLAS Parent BFS       |   4352 |   3936 |   4577
+GraphBLAS Multisource BFS |   4279 |   3677 |   4886
+
+ Speedups 
+GraphBLAS Parent / Classic Parent: 0.78x
+Boost BGL Parent / Classic Parent: 0.64x
+GraphBLAS Multisource / Classic Multisource: 0.79x
+Запуск: flickr_abs_80000_density_35
+GraphBLAS initialized
+Benchmark: ../graphs/flickr_abs_80000_density_35.mtx
+Graph loaded: 80000 vertices, 2800000 edges
+Start vertex: 22327
+Sources: 22327 10697 64299 68856 
+Boost BGL: graph construction (performed once, not included in the measurements below): 0.035286 сек
+GraphBLAS: matrix construction (performed once, not included in the measurements below): 0.013493 сек
+
+ Level statistics for ../graphs/flickr_abs_80000_density_35.mtx (single-source from max-degree):
+   reachable   = 80000 (100.0%)
+   unreachable = 0 (0.0%)
+   max_level   = 3
+   max_width   = 65970
+   max_width / |V|)       = 82.46%
+
+Running 10 iterations...
+
+ Results (microseconds) 
+Metric                    | Avg    | Min    | Max
+--------------------------|--------|--------|--------
+Classic Parent BFS        |   5239 |   4970 |   5618
+Boost BGL Parent BFS      |   7907 |   7806 |   8111
+Classic Multisource BFS   |   4889 |   4666 |   5569
+GraphBLAS Parent BFS       |   5222 |   4656 |   5694
+GraphBLAS Multisource BFS |   5173 |   4633 |   5642
+
+ Speedups 
+GraphBLAS Parent / Classic Parent: 1.00x
+Boost BGL Parent / Classic Parent: 0.66x
+GraphBLAS Multisource / Classic Multisource: 0.95x
+Запуск: flickr_density_31
+GraphBLAS initialized
+Benchmark: ../graphs/flickr_density_31.mtx
+Graph loaded: 105938 vertices, 3284078 edges
+Start vertex: 22327
+Sources: 22327 10697 68856 64299 
+Boost BGL: graph construction (performed once, not included in the measurements below): 0.039605 сек
+GraphBLAS: matrix construction (performed once, not included in the measurements below): 0.015780 сек
+
+ Level statistics for ../graphs/flickr_density_31.mtx (single-source from max-degree):
+   reachable   = 105938 (100.0%)
+   unreachable = 0 (0.0%)
+   max_level   = 3
+   max_width   = 74378
+   max_width / |V|)       = 70.21%
+
+Running 10 iterations...
+
+ Results (microseconds) 
+Metric                    | Avg    | Min    | Max
+--------------------------|--------|--------|--------
+Classic Parent BFS        |   6846 |   6672 |   7607
+Boost BGL Parent BFS      |  11725 |  11598 |  12107
+Classic Multisource BFS   |   6701 |   6605 |   6912
+GraphBLAS Parent BFS       |   6847 |   6340 |   7501
+GraphBLAS Multisource BFS |   6665 |   6173 |   7976
+
+ Speedups 
+GraphBLAS Parent / Classic Parent: 1.00x
+Boost BGL Parent / Classic Parent: 0.58x
+GraphBLAS Multisource / Classic Multisource: 1.01x
+Запуск: flickr_density_32
+GraphBLAS initialized
+Benchmark: ../graphs/flickr_density_32.mtx
+Graph loaded: 105938 vertices, 3390016 edges
+Start vertex: 22327
+Sources: 22327 10697 68856 64299 
+Boost BGL: graph construction (performed once, not included in the measurements below): 0.040398 сек
+GraphBLAS: matrix construction (performed once, not included in the measurements below): 0.016359 сек
+
+ Level statistics for ../graphs/flickr_density_32.mtx (single-source from max-degree):
+   reachable   = 105938 (100.0%)
+   unreachable = 0 (0.0%)
+   max_level   = 3
+   max_width   = 76835
+   max_width / |V|)       = 72.53%
+
+Running 10 iterations...
+
+ Results (microseconds) 
+Metric                    | Avg    | Min    | Max
+--------------------------|--------|--------|--------
+Classic Parent BFS        |  10108 |  10003 |  10409
+Boost BGL Parent BFS      |  10605 |  10560 |  10679
+Classic Multisource BFS   |   7789 |   7511 |   8801
+GraphBLAS Parent BFS       |   6894 |   6353 |   7616
+GraphBLAS Multisource BFS |   6666 |   6201 |   7318
+
+ Speedups 
+GraphBLAS Parent / Classic Parent: 1.47x
+Boost BGL Parent / Classic Parent: 0.95x
+GraphBLAS Multisource / Classic Multisource: 1.17x
+Запуск: flickr_density_33
+GraphBLAS initialized
+Benchmark: ../graphs/flickr_density_33.mtx
+Graph loaded: 105938 vertices, 3495954 edges
+Start vertex: 22327
+Sources: 22327 10697 68856 64299 
+Boost BGL: graph construction (performed once, not included in the measurements below): 0.041201 сек
+GraphBLAS: matrix construction (performed once, not included in the measurements below): 0.016774 сек
+
+ Level statistics for ../graphs/flickr_density_33.mtx (single-source from max-degree):
+   reachable   = 105938 (100.0%)
+   unreachable = 0 (0.0%)
+   max_level   = 3
+   max_width   = 79254
+   max_width / |V|)       = 74.81%
+
+Running 10 iterations...
+
+ Results (microseconds) 
+Metric                    | Avg    | Min    | Max
+--------------------------|--------|--------|--------
+Classic Parent BFS        |   8075 |   7987 |   8204
+Boost BGL Parent BFS      |  11529 |  11385 |  11914
+Classic Multisource BFS   |   8138 |   7966 |   8451
+GraphBLAS Parent BFS       |   6670 |   6227 |   7100
+GraphBLAS Multisource BFS |   6606 |   5560 |   7402
+
+ Speedups 
+GraphBLAS Parent / Classic Parent: 1.21x
+Boost BGL Parent / Classic Parent: 0.70x
+GraphBLAS Multisource / Classic Multisource: 1.23x
+Запуск: flickr_density_34
+GraphBLAS initialized
+Benchmark: ../graphs/flickr_density_34.mtx
+Graph loaded: 105938 vertices, 3601892 edges
+Start vertex: 22327
+Sources: 22327 10697 68856 64299 
+Boost BGL: graph construction (performed once, not included in the measurements below): 0.042343 сек
+GraphBLAS: matrix construction (performed once, not included in the measurements below): 0.017390 сек
+
+ Level statistics for ../graphs/flickr_density_34.mtx (single-source from max-degree):
+   reachable   = 105938 (100.0%)
+   unreachable = 0 (0.0%)
+   max_level   = 3
+   max_width   = 81199
+   max_width / |V|)       = 76.65%
+
+Running 10 iterations...
+
+ Results (microseconds) 
+Metric                    | Avg    | Min    | Max
+--------------------------|--------|--------|--------
+Classic Parent BFS        |   8849 |   8160 |   9939
+Boost BGL Parent BFS      |  13557 |  13202 |  13744
+Classic Multisource BFS   |   9585 |   8936 |   9903
+GraphBLAS Parent BFS       |   7438 |   6811 |   8340
+GraphBLAS Multisource BFS |   7306 |   6612 |   7894
+
+ Speedups 
+GraphBLAS Parent / Classic Parent: 1.19x
+Boost BGL Parent / Classic Parent: 0.65x
+GraphBLAS Multisource / Classic Multisource: 1.31x

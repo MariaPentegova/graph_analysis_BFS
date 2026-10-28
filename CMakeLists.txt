@@ -1,0 +1,176 @@
+cmake_minimum_required(VERSION 3.10)
+project(GraphBFS VERSION 1.0.0 LANGUAGES C CXX)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    add_compile_options(-O3)
+    message(STATUS "Compiler optimization forced to: -O3")
+endif()
+
+if(POLICY CMP0167)
+    cmake_policy(SET CMP0167 OLD)
+endif()
+
+find_package(Boost REQUIRED)
+
+if(Boost_FOUND)
+    message(STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}")
+else()
+    set(Boost_INCLUDE_DIRS "/usr/include")
+endif()
+
+find_path(GRAPHBLAS_INCLUDE_DIR
+    NAMES GraphBLAS.h
+    PATHS /usr/local/include/suitesparse /usr/include/suitesparse /usr/local/include /usr/include
+    PATH_SUFFIXES suitesparse
+)
+
+find_library(GRAPHBLAS_LIBRARY
+    NAMES graphblas libgraphblas
+    PATHS /usr/local/lib /usr/lib /usr/lib/x86_64-linux-gnu
+)
+
+if(NOT GRAPHBLAS_INCLUDE_DIR)
+    message(FATAL_ERROR "Could not find GraphBLAS.h")
+endif()
+
+if(NOT GRAPHBLAS_LIBRARY)
+    message(FATAL_ERROR "Could not find graphblas library")
+endif()
+
+message(STATUS "GraphBLAS include: ${GRAPHBLAS_INCLUDE_DIR}")
+message(STATUS "GraphBLAS library: ${GRAPHBLAS_LIBRARY}")
+
+set(MAIN_DIR ${PROJECT_SOURCE_DIR}/src/main)
+set(TESTS_DIR ${PROJECT_SOURCE_DIR}/src/tests)
+
+set(UTILS_SOURCES
+    ${MAIN_DIR}/utils.c
+)
+
+set(CLASSIC_BFS_SOURCES
+    ${MAIN_DIR}/classic_bfs.c
+)
+
+set(GRAPHBLAS_BFS_SOURCES
+    ${MAIN_DIR}/graphblas_bfs.c
+)
+
+set(TEST_UTILS_SOURCES
+    ${TESTS_DIR}/test_utils.c
+)
+
+add_executable(bfs_analysis
+    ${MAIN_DIR}/main.c
+    ${UTILS_SOURCES}
+    ${CLASSIC_BFS_SOURCES}
+    ${GRAPHBLAS_BFS_SOURCES}
+)
+
+target_include_directories(bfs_analysis PRIVATE
+    ${MAIN_DIR}
+    ${GRAPHBLAS_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIRS}
+)
+
+target_link_libraries(bfs_analysis
+    ${GRAPHBLAS_LIBRARY}
+    m
+    pthread
+)
+
+add_executable(bfs_benchmark
+    ${MAIN_DIR}/benchmark.cpp
+    ${UTILS_SOURCES}
+    ${CLASSIC_BFS_SOURCES}
+    ${GRAPHBLAS_BFS_SOURCES}
+)
+
+target_include_directories(bfs_benchmark PRIVATE
+    ${MAIN_DIR}
+    ${GRAPHBLAS_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIRS}
+)
+
+target_link_libraries(bfs_benchmark
+    ${GRAPHBLAS_LIBRARY}
+    m
+    pthread
+)
+
+target_compile_definitions(bfs_analysis PRIVATE NDEBUG)
+target_compile_definitions(bfs_benchmark PRIVATE NDEBUG)
+
+enable_testing()
+
+add_executable(test_classic_bfs
+    ${TESTS_DIR}/test_classic_bfs.c
+    ${TEST_UTILS_SOURCES}
+    ${UTILS_SOURCES}
+    ${CLASSIC_BFS_SOURCES}
+)
+
+target_include_directories(test_classic_bfs PRIVATE
+    ${MAIN_DIR}
+    ${TESTS_DIR}
+    ${GRAPHBLAS_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIRS}
+)
+
+target_link_libraries(test_classic_bfs
+    m
+    pthread
+)
+
+add_executable(test_graphblas_bfs
+    ${TESTS_DIR}/test_graphblas_bfs.c
+    ${TEST_UTILS_SOURCES}
+    ${UTILS_SOURCES}
+    ${GRAPHBLAS_BFS_SOURCES}
+)
+
+target_include_directories(test_graphblas_bfs PRIVATE
+    ${MAIN_DIR}
+    ${TESTS_DIR}
+    ${GRAPHBLAS_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIRS}
+)
+
+target_link_libraries(test_graphblas_bfs
+    ${GRAPHBLAS_LIBRARY}
+    m
+    pthread
+)
+
+add_executable(test_comparison
+    ${TESTS_DIR}/test_comparison.cpp
+    ${TEST_UTILS_SOURCES}
+    ${UTILS_SOURCES}
+    ${CLASSIC_BFS_SOURCES}
+    ${GRAPHBLAS_BFS_SOURCES}
+)
+
+target_include_directories(test_comparison PRIVATE
+    ${MAIN_DIR}
+    ${TESTS_DIR}
+    ${GRAPHBLAS_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIRS}
+)
+
+target_link_libraries(test_comparison
+    ${GRAPHBLAS_LIBRARY}
+    m
+    pthread
+    ${Boost_LIBRARIES}
+)
+
+add_test(NAME ClassicBFS COMMAND test_classic_bfs)
+add_test(NAME GraphBLASBFS COMMAND test_graphblas_bfs)
+add_test(NAME Comparison COMMAND test_comparison)
+
+message(STATUS "Build configuration ready")

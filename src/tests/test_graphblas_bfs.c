@@ -1,0 +1,391 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include "test_utils.h"
+#include "../main/graphblas_bfs.h"
+
+void test_graphblas_level_bfs_correctness() {
+    printf("\n Test GraphBLAS Level BFS Correctness \n");
+
+    CSRMatrix* csr = create_test_csr();
+    assert(csr != NULL);
+
+    int n = csr->n;
+    int* level = (int*)malloc(n * sizeof(int));
+    assert(level != NULL);
+
+    Graph* temp_g = create_test_graph();
+    int start_vertex = find_max_degree_vertex(temp_g);
+    delete_graph(temp_g);
+
+    printf(" Start vertex (max degree): %d\n", start_vertex);
+
+    void* A = NULL;
+    int rc = graphblas_build_matrix(csr, &A);
+    if (rc != 0) {
+        printf("FAIL: build_matrix failed\n");
+        exit(1);
+    }
+
+    int result = graphblas_level_bfs(csr, A, start_vertex, level);
+    if (result != 0) {
+        printf("FAIL: level_bfs failed\n");
+        exit(1);
+    }
+
+    int all_visited = 1;
+    for (int i = 0; i < n; i++) {
+        if (level[i] == -1) {
+            all_visited = 0;
+            break;
+        }
+    }
+    assert(all_visited == 1);
+    printf("All vertices are visited\n");
+
+    assert(level[start_vertex] == 0);
+    printf("Distance to the start = 0\n");
+
+    int expected_levels_0[5] = {0, 1, 2, 1, 2};
+    int expected_levels_1[5] = {1, 0, 1, 2, 1};
+
+    if (start_vertex == 0) {
+        for (int i = 0; i < n; i++) {
+            assert(level[i] == expected_levels_0[i]);
+        }
+        printf("Distances are valid for start=0\n");
+    } else if (start_vertex == 1) {
+        for (int i = 0; i < n; i++) {
+            assert(level[i] == expected_levels_1[i]);
+        }
+        printf("Distances are valid for start=1\n");
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (level[i] != -1) {
+            assert(level[i] < n);
+        }
+    }
+    printf("All distances are valid\n");
+
+    int all_have_parent = 1;
+    for (int i = 0; i < n; i++) {
+        if (level[i] > 0) {
+            int found = 0;
+            int start = csr->row_ptr[i];
+            int end = csr->row_ptr[i + 1];
+            for (int j = start; j < end; j++) {
+                int neighbor = csr->col_idx[j];
+                if (level[neighbor] == level[i] - 1) {
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) {
+                all_have_parent = 0;
+                break;
+            }
+        }
+    }
+    assert(all_have_parent == 1);
+    printf("Each vertex has a neighbor one level higher.\n");
+
+    graphblas_free_matrix(A);
+    free(level);
+    delete_csr(csr);
+    printf("Test GraphBLAS Level BFS passed!\n");
+}
+
+void test_graphblas_multisource_level_bfs_correctness() {
+    printf("\nTest GraphBLAS Multisource Level BFS Correctness \n");
+
+    CSRMatrix* csr = create_test_csr();
+    assert(csr != NULL);
+
+    int n = csr->n;
+    int* level = (int*)malloc(n * sizeof(int));
+    assert(level != NULL);
+
+    int num_sources = 4;
+    int* sources = (int*)malloc(num_sources * sizeof(int));
+    assert(sources != NULL);
+
+    int step = n / num_sources;
+    for (int i = 0; i < num_sources; i++) {
+        sources[i] = i * step;
+    }
+
+    printf(" Sources: ");
+    for (int i = 0; i < num_sources; i++) {
+        printf("%d ", sources[i]);
+    }
+    printf("\n");
+
+    void* A = NULL;
+    assert(graphblas_build_matrix(csr, &A) == 0);
+
+    int result = graphblas_multisource_level_bfs(csr, A, sources, num_sources, level);
+    assert(result == 0);
+
+    int all_visited = 1;
+    for (int i = 0; i < n; i++) {
+        if (level[i] == -1) {
+            all_visited = 0;
+            break;
+        }
+    }
+    assert(all_visited == 1);
+    printf("All vertices are visited\n");
+
+    int all_sources_zero = 1;
+    for (int i = 0; i < num_sources; i++) {
+        if (level[sources[i]] != 0) {
+            all_sources_zero = 0;
+            break;
+        }
+    }
+    assert(all_sources_zero == 1);
+    printf("All sources have distance=0\n");
+
+    assert(level[0] == 0);
+    assert(level[1] == 0);
+    assert(level[2] == 0);
+    assert(level[3] == 0);
+    assert(level[4] == 1);
+    printf("The distances are correct for this graph.\n");
+
+    for (int i = 0; i < n; i++) {
+        if (level[i] != -1) {
+            assert(level[i] < n);
+        }
+    }
+    printf("All distances are valid\n");
+
+    int* level_single = (int*)malloc(n * sizeof(int));
+    assert(level_single != NULL);
+    graphblas_level_bfs(csr, A, 0, level_single);
+
+    for (int i = 0; i < n; i++) {
+        assert(level[i] <= level_single[i]);
+    }
+    printf("Multisource distances <= Single-source\n");
+
+    int found_smaller = 0;
+    for (int i = 0; i < n; i++) {
+        if (level[i] < level_single[i]) {
+            found_smaller = 1;
+            break;
+        }
+    }
+    assert(found_smaller == 1);
+    printf("There are vertices with a smaller distance in the multi-source case.\n");
+
+    graphblas_free_matrix(A);
+    free(level);
+    free(level_single);
+    free(sources);
+    delete_csr(csr);
+    printf("Test GraphBLAS Multisource Level BFS passed!\n");
+}
+
+void test_graphblas_parent_bfs_correctness() {
+    printf("\nTest GraphBLAS Parent BFS Correctness \n");
+
+    CSRMatrix* csr = create_test_csr();
+    assert(csr != NULL);
+    int n = csr->n;
+
+    int* parent = (int*)malloc(n * sizeof(int));
+    assert(parent != NULL);
+
+    Graph* temp_g = create_test_graph();
+    int start_vertex = find_max_degree_vertex(temp_g);
+    delete_graph(temp_g);
+
+    void* A = NULL;
+    int rc = graphblas_build_matrix(csr, &A);
+    assert(rc == 0);
+    (void)rc;
+
+    rc = graphblas_parent_bfs(csr, A, start_vertex, parent);
+    assert(rc == 0);
+    (void)rc;
+
+    assert(parent[start_vertex] == start_vertex);
+    for (int v = 0; v < n; v++) {
+        if (v == start_vertex) continue;
+        assert(parent[v] != -1);
+        assert(parent[v] != v);
+        int found = 0;
+        for (int j = csr->row_ptr[v]; j < csr->row_ptr[v + 1]; j++) {
+            if (csr->col_idx[j] == parent[v]) {
+                found = 1;
+                break;
+            }
+        }
+        assert(found == 1);
+    }
+
+    graphblas_free_matrix(A);
+    free(parent);
+    delete_csr(csr);
+    printf("Test GraphBLAS Parent BFS passed!\n");
+}
+
+void test_graphblas_multisource_parent_bfs_correctness() {
+    printf("\nTest GraphBLAS Multisource Parent BFS Correctness \n");
+
+    CSRMatrix* csr = create_test_csr();
+    assert(csr != NULL);
+    int n = csr->n;
+
+    int* parent = (int*)malloc(n * sizeof(int));
+    assert(parent != NULL);
+
+    int num_sources = 4;
+    int* sources = (int*)malloc(num_sources * sizeof(int));
+    assert(sources != NULL);
+    int step = n / num_sources;
+    for (int i = 0; i < num_sources; i++) sources[i] = i * step;
+
+    void* A = NULL;
+    int rc = graphblas_build_matrix(csr, &A);
+    assert(rc == 0);
+    (void)rc;
+
+    rc = graphblas_multisource_parent_bfs(csr, A, sources, num_sources, parent);
+    assert(rc == 0);
+    (void)rc;
+
+    for (int i = 0; i < num_sources; i++) {
+        assert(parent[sources[i]] == sources[i]);
+    }
+    for (int v = 0; v < n; v++) {
+        if (parent[v] == -1) continue;
+        if (parent[v] == v) continue;
+        int found = 0;
+        for (int j = csr->row_ptr[v]; j < csr->row_ptr[v + 1]; j++) {
+            if (csr->col_idx[j] == parent[v]) {
+                found = 1;
+                break;
+            }
+        }
+        assert(found == 1);
+    }
+
+    graphblas_free_matrix(A);
+    free(parent);
+    free(sources);
+    delete_csr(csr);
+    printf("Test GraphBLAS Multisource Parent BFS passed!\n");
+}
+
+void test_disconnected_gb_level_bfs() {
+    printf("\nTest GraphBLAS Level BFS on Disconnected Graph\n");
+    CSRMatrix* csr = create_disconnected_test_csr();
+    int* level = (int*)malloc(csr->n * sizeof(int));
+    assert(level != NULL);
+
+    void* A = NULL;
+    assert(graphblas_build_matrix(csr, &A) == 0);
+    assert(graphblas_level_bfs(csr, A, 0, level) == 0);
+
+    assert(level[0] == 0);
+    assert(level[1] == 1);
+    assert(level[2] == -1);
+    assert(level[3] == -1);
+    assert(level[4] == -1);
+
+    graphblas_free_matrix(A);
+    free(level);
+    delete_csr(csr);
+    printf("Test Disconnected GB Level BFS passed!\n");
+}
+
+void test_disconnected_gb_multisource_level_bfs() {
+    printf("\nTest GraphBLAS Multisource Level BFS on Disconnected Graph\n");
+    CSRMatrix* csr = create_disconnected_test_csr();
+    int* level = (int*)malloc(csr->n * sizeof(int));
+    assert(level != NULL);
+
+    void* A = NULL;
+    assert(graphblas_build_matrix(csr, &A) == 0);
+    int sources[2] = {0, 2};
+    assert(graphblas_multisource_level_bfs(csr, A, sources, 2, level) == 0);
+
+    assert(level[0] == 0);
+    assert(level[2] == 0);
+    assert(level[1] == 1);
+    assert(level[3] == 1);
+    assert(level[4] == -1);
+
+    graphblas_free_matrix(A);
+    free(level);
+    delete_csr(csr);
+    printf("Test Disconnected GB Multisource Level BFS passed!\n");
+}
+
+void test_disconnected_gb_parent_bfs() {
+    printf("\nTest GraphBLAS Parent BFS on Disconnected Graph\n");
+    CSRMatrix* csr = create_disconnected_test_csr();
+    int* parent = (int*)malloc(csr->n * sizeof(int));
+    assert(parent != NULL);
+
+    void* A = NULL;
+    assert(graphblas_build_matrix(csr, &A) == 0);
+    assert(graphblas_parent_bfs(csr, A, 0, parent) == 0);
+
+    assert(parent[0] == 0);
+    assert(parent[1] == 0);
+    assert(parent[2] == -1);
+    assert(parent[3] == -1);
+    assert(parent[4] == -1);
+
+    graphblas_free_matrix(A);
+    free(parent);
+    delete_csr(csr);
+    printf("Test Disconnected GB Parent BFS passed!\n");
+}
+
+void test_disconnected_gb_multisource_parent_bfs() {
+    printf("\nTest GraphBLAS Multisource Parent BFS on Disconnected Graph\n");
+    CSRMatrix* csr = create_disconnected_test_csr();
+    int* parent = (int*)malloc(csr->n * sizeof(int));
+    assert(parent != NULL);
+
+    void* A = NULL;
+    assert(graphblas_build_matrix(csr, &A) == 0);
+    int sources[2] = {0, 2};
+    assert(graphblas_multisource_parent_bfs(csr, A, sources, 2, parent) == 0);
+
+    assert(parent[0] == 0);
+    assert(parent[2] == 2);
+    assert(parent[1] == 0);
+    assert(parent[3] == 2);
+    assert(parent[4] == -1);
+
+    graphblas_free_matrix(A);
+    free(parent);
+    delete_csr(csr);
+    printf("Test Disconnected GB Multisource Parent BFS passed!\n");
+}
+
+int main() {
+    if (graphblas_init() != 0) {
+        return 1;
+    }
+
+    test_graphblas_level_bfs_correctness();
+    test_graphblas_multisource_level_bfs_correctness();
+    test_graphblas_parent_bfs_correctness();
+    test_graphblas_multisource_parent_bfs_correctness();
+    test_disconnected_gb_level_bfs();
+    test_disconnected_gb_multisource_level_bfs();
+    test_disconnected_gb_parent_bfs();
+    test_disconnected_gb_multisource_parent_bfs();
+
+    graphblas_finalize();
+    printf("All Tests GraphBLAS BFS passed!\n");
+    return 0;
+}
+

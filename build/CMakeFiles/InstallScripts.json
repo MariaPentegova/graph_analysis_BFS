@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/masha/graph_blas_bfs-2/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
