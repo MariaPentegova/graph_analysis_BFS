@@ -22,7 +22,7 @@ typedef struct Graph Graph;
 typedef struct CSRMatrix CSRMatrix;
 
 Graph* create_graph(int n);
-void add_edge(struct Graph* g, int src, int dest);
+void add_edge(Graph* g, int src, int dest);
 Graph* load_matrix(const char* filename);
 CSRMatrix* graph_to_csr(Graph* g);
 int find_max_degree_vertex(Graph* g);
