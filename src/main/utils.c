@@ -319,45 +319,45 @@ void print_level_stats(const int* level, int n, const char* graph_name, int true
     printf(" RECOMMENDATION: ");
 
     int use_graphblas = 0;
+    const char* zone_name = "";
     const char* reason = "";
 
-    if (avg_degree >= 31.0) {
-        if (max_width > 60000) {
-            use_graphblas = 1;
-            reason = "avg_degree >= 31 AND max_width > 60k";
-        } else {
-            use_graphblas = 0;
-            reason = "avg_degree >= 31 BUT max_width <= 60k";
-        }
-    }
-    else if (avg_degree >= 4.4) {
-        if (max_width > 290000) {
-            use_graphblas = 1;
-            reason = "avg_degree >= 4.4 AND max_width > 290k";
-        } else {
-            use_graphblas = 0;
-            reason = "avg_degree >= 4.4 BUT max_width <= 290k";
-        }
-    }
-    else if (avg_degree >= 1.4) {
-        if (max_width > 600000) {
-            use_graphblas = 1;
-            reason = "avg_degree >= 1.4 AND max_width > 600k";
-        } else {
-            use_graphblas = 0;
-            reason = "avg_degree >= 1.4 BUT max_width <= 600k";
-        }
-    }
-    else {
+    if (avg_degree < 1.4) {
         use_graphblas = 0;
+        zone_name = "Classic BFS (Base Zone)";
         reason = "avg_degree < 1.4 (graph is too sparse)";
     }
-
-    if (use_graphblas) {
-        printf("GraphBLAS\n");
-    } else {
-        printf("Classic BFS\n");
+    else if (avg_degree < 4.4 && max_width <= 600000) {
+        use_graphblas = 0;
+        zone_name = "Classic BFS (Base Zone)";
+        reason = "avg_degree < 4.4 AND max_width <= 600k";
     }
+    else if (avg_degree < 31.0 && max_width <= 290000) {
+        use_graphblas = 0;
+        zone_name = "Classic BFS (Base Zone)";
+        reason = "avg_degree < 31.0 AND max_width <= 290k";
+    }
+    else if (avg_degree >= 31.0 && max_width <= 60000) {
+        use_graphblas = 0;
+        zone_name = "Classic BFS (Base Zone)";
+        reason = "avg_degree >= 31.0 BUT max_width <= 60k";
+    }
+    else {
+        use_graphblas = 1;
+
+        if (avg_degree >= 31.0) {
+            zone_name = "GraphBLAS (Zone 1: Dense)";
+            reason = "avg_degree >= 31 AND max_width > 60k";
+        } else if (avg_degree >= 4.4) {
+            zone_name = "GraphBLAS (Zone 2: Wide)";
+            reason = "avg_degree >= 4.4 AND max_width > 290k";
+        } else {
+            zone_name = "GraphBLAS (Zone 3: Sparse & Huge)";
+            reason = "avg_degree >= 1.4 AND max_width > 600k";
+        }
+    }
+
+    printf("%s\n", zone_name);
     printf(" Reason: %s\n", reason);
 
     free(width);
