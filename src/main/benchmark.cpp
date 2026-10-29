@@ -27,19 +27,29 @@ double get_time_in_seconds() {
 
 double average(double* arr, int n) {
     double sum = 0.0;
-    for (int i = 0; i < n; i++) sum += arr[i];
+    for (int i = 0; i < n; i++){
+        sum += arr[i];
+    }
     return sum / n;
 }
 
 double min_value(double* arr, int n) {
     double min = arr[0];
-    for (int i = 1; i < n; i++) if (arr[i] < min) min = arr[i];
+    for (int i = 1; i < n; i++){
+        if (arr[i] < min){
+            min = arr[i];
+        }
+    }
     return min;
 }
 
 double max_value(double* arr, int n) {
     double max = arr[0];
-    for (int i = 1; i < n; i++) if (arr[i] > max) max = arr[i];
+    for (int i = 1; i < n; i++){
+        if (arr[i] > max){
+            max = arr[i];
+        }
+    }
     return max;
 }
 
@@ -47,14 +57,18 @@ void run_benchmark(const char* graph_file) {
     printf("\nBenchmark: %s\n", graph_file);
 
     Graph* g = load_matrix(graph_file);
-    if (g == NULL) return;
+    if (g == NULL){
+        return;
+    }
 
     int is_symmetric = 0;
     FILE* f = fopen(graph_file, "r");
     if (f) {
         char line[256];
         if (fgets(line, sizeof(line), f)) {
-            if (strstr(line, "symmetric")) is_symmetric = 1;
+            if (strstr(line, "symmetric")){
+                is_symmetric = 1;
+            }
         }
         fclose(f);
     }
@@ -76,8 +90,12 @@ void run_benchmark(const char* graph_file) {
     int* parent = (int*)malloc(csr->n * sizeof(int));
     int* level = (int*)malloc(csr->n * sizeof(int));
     if (parent == NULL || level == NULL) {
-        free(sources); free(parent); free(level);
-        delete_graph(g); delete_csr(csr); return;
+        free(sources);
+        free(parent);
+        free(level);
+        delete_graph(g);
+        delete_csr(csr);
+        return;
     }
 
     typedef boost::compressed_sparse_row_graph<
@@ -97,8 +115,12 @@ void run_benchmark(const char* graph_file) {
 
     void* gb_matrix = NULL;
     if (graphblas_build_matrix(csr, &gb_matrix) != 0) {
-        free(sources); free(parent); free(level);
-        delete_graph(g); delete_csr(csr); return;
+        free(sources);
+        free(parent);
+        free(level);
+        delete_graph(g);
+        delete_csr(csr);
+        return;
     }
 
     graphblas_level_bfs(csr, gb_matrix, start_vertex, level);

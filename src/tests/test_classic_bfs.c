@@ -5,69 +5,49 @@
 #include "test_utils.h"
 #include "../main/classic_bfs.h"
 
+void test_classic_bfs_from(CSRMatrix* csr, int start_vertex) {
+    int n = csr->n;
+    int* parent = (int*)malloc(n * sizeof(int));
+    assert(parent != NULL);
+
+    printf(" Testing start vertex: %d\n", start_vertex);
+    csr_parent_bfs(csr, start_vertex, parent);
+
+    int all_visited = 1;
+    for (int i = 0; i < n; i++) {
+        if (parent[i] == -1){
+            all_visited = 0;
+        }
+    }
+    assert(all_visited == 1);
+    assert(parent[start_vertex] == start_vertex);
+
+    if (start_vertex == 0) {
+        assert(parent[0] == 0);
+        assert(parent[1] == 0);
+        assert(parent[2] == 1);
+        assert(parent[3] == 0);
+        assert(parent[4] == 1 || parent[4] == 3);
+    } else if (start_vertex == 1) {
+        assert(parent[1] == 1);
+        assert(parent[0] == 1);
+        assert(parent[2] == 1);
+        assert(parent[4] == 1);
+        assert(parent[3] == 0 || parent[3] == 4);
+    }
+
+    free(parent);
+}
+
 void test_classic_parent_bfs_correctness() {
     printf("\nTest Classic Parent BFS Correctness\n");
 
     CSRMatrix* csr = create_test_csr();
     assert(csr != NULL);
 
-    int n = csr->n;
-    int* parent = (int*)malloc(n * sizeof(int));
-    assert(parent != NULL);
+    test_classic_bfs_from(csr, 0);
+    test_classic_bfs_from(csr, 1);
 
-    Graph* temp_g = create_test_graph();
-    int start_vertex = find_max_degree_vertex(temp_g);
-    delete_graph(temp_g);
-
-    printf(" Start vertex (max degree): %d\n", start_vertex);
-
-    csr_parent_bfs(csr, start_vertex, parent);
-
-    int all_visited = 1;
-    for (int i = 0; i < n; i++) {
-        if (parent[i] == -1) {
-            all_visited = 0;
-            break;
-        }
-    }
-    assert(all_visited == 1);
-    printf("All summits visited\n");
-
-    assert(parent[start_vertex] == start_vertex);
-    printf("The root points to itself.\n");
-
-    int no_self_loops = 1;
-    for (int i = 0; i < n; i++) {
-        if (i != start_vertex && parent[i] == i) {
-            no_self_loops = 0;
-            break;
-        }
-    }
-    assert(no_self_loops == 1);
-    printf("Non-root vertices have no loops.\n");
-
-    int expected_parent_0[5] = {0, 0, 1, 0, 1};
-
-    if (start_vertex == 0) {
-        for (int i = 0; i < n; i++) {
-            assert(parent[i] == expected_parent_0[i]);
-        }
-        printf("Parents are valid for start=0\n");
-    } else if (start_vertex == 1) {
-        assert(parent[0] == 1);
-        assert(parent[2] == 1);
-        assert(parent[3] == 0 || parent[3] == 4);
-        assert(parent[4] == 1);
-        printf(" Parents are valid for start=1\n");
-    }
-    for (int i = 0; i < n; i++) {
-        if (i != start_vertex && parent[i] != -1) {
-            assert(parent[i] != i);
-        }
-    }
-    printf("All parents are valid\n");
-
-    free(parent);
     delete_csr(csr);
     printf("Test Classic Parent BFS passed!\n");
 }
@@ -136,8 +116,6 @@ void test_classic_multisource_bfs_correctness() {
     assert(no_self_loops == 1);
     printf("Non-root vertices have no loops.\n");
 
-    int expected_parent[5] = {0, 1, 2, 3, 1};
-
     for (int i = 0; i < n; i++) {
         if (i == 0 || i == 1 || i == 2 || i == 3) {
             assert(parent[i] == i);
@@ -199,10 +177,8 @@ void test_disconnected_multisource_classic() {
 
     assert(parent[0] == 0);
     assert(parent[2] == 2);
-
     assert(parent[1] == 0);
     assert(parent[3] == 2);
-
     assert(parent[4] == -1);
 
     free(parent);

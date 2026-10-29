@@ -44,7 +44,9 @@ int main(int argc, char* argv[]) {
     if (f) {
         char line[256];
         if (fgets(line, sizeof(line), f)) {
-            if (strstr(line, "symmetric")) is_symmetric = 1;
+            if (strstr(line, "symmetric")) {
+                is_symmetric = 1;
+            }
         }
         fclose(f);
     }

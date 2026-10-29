@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include "test_utils.h"
 
-Graph* create_test_graph() {
+Graph* create_test_graph(void) {
     Graph* g = create_graph(5);
-    if (g == NULL) return NULL;
+    if (g == NULL) {
+        return NULL;
+    }
 
     add_edge(g, 0, 1);
     add_edge(g, 1, 2);
@@ -15,19 +17,35 @@ Graph* create_test_graph() {
     return g;
 }
 
-CSRMatrix* create_test_csr() {
+Graph* create_disconnected_test_graph(void) {
+    Graph* g = create_graph(5);
+    if (g == NULL) {
+        return NULL;
+    }
+
+    add_edge(g, 0, 1);
+    add_edge(g, 2, 3);
+
+    return g;
+}
+
+CSRMatrix* create_test_csr(void) {
     Graph* g = create_test_graph();
-    if (g == NULL) return NULL;
+    if (g == NULL) {
+        return NULL;
+    }
 
     CSRMatrix* csr = graph_to_csr(g);
     delete_graph(g);
     return csr;
 }
 
-CSRMatrix* create_disconnected_test_csr() {
-    Graph* g = create_graph(5);
-    add_edge(g, 0, 1);
-    add_edge(g, 2, 3);
+CSRMatrix* create_disconnected_test_csr(void) {
+    Graph* g = create_disconnected_test_graph();
+    if (g == NULL) {
+        return NULL;
+    }
+
     CSRMatrix* csr = graph_to_csr(g);
     delete_graph(g);
     return csr;
@@ -52,10 +70,14 @@ int compare_levels(int* level1, int* level2, int n) {
 }
 
 int check_parent_correctness(int* parent, int n, int start_vertex) {
-    if (parent[start_vertex] != start_vertex) return 0;
+    if (parent[start_vertex] != start_vertex){
+        return 0;
+    }
 
     for (int i = 0; i < n; i++) {
-        if (parent[i] == -1) return 0;
+        if (parent[i] == -1){
+            return 0;
+        }
     }
 
     for (int i = 0; i < n; i++) {

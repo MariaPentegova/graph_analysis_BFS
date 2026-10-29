@@ -109,23 +109,28 @@ void compare_single_source_classic_vs_graphblas() {
     int* parent_classic = (int*)malloc(n * sizeof(int));
     int* parent_graphblas = (int*)malloc(n * sizeof(int));
 
-    Graph* temp_g = create_test_graph();
-    int start_vertex = find_max_degree_vertex(temp_g);
-    delete_graph(temp_g);
-
-    csr_parent_bfs(csr, start_vertex, parent_classic);
     void* A = NULL;
     assert(graphblas_build_matrix(csr, &A) == 0);
-    assert(graphblas_parent_bfs(csr, A, start_vertex, parent_graphblas) == 0);
-    graphblas_free_matrix(A);
 
-    check_parent_tree(csr, parent_classic, start_vertex);
-    check_parent_tree(csr, parent_graphblas, start_vertex);
+    int starts[] = {0, 1};
+    for (int s = 0; s < 2; s++) {
+        int start_vertex = starts[s];
 
-    for (int i = 0; i < n; i++) {
-        assert((parent_classic[i] == -1) == (parent_graphblas[i] == -1));
+        csr_parent_bfs(csr, start_vertex, parent_classic);
+        assert(graphblas_parent_bfs(csr, A, start_vertex, parent_graphblas) == 0);
+
+        check_parent_tree(csr, parent_classic, start_vertex);
+        check_parent_tree(csr, parent_graphblas, start_vertex);
+
+        for (int i = 0; i < n; i++) {
+            assert((parent_classic[i] == -1) == (parent_graphblas[i] == -1));
+        }
     }
-    free(parent_classic); free(parent_graphblas); delete_csr(csr);
+
+    graphblas_free_matrix(A);
+    free(parent_classic);
+    free(parent_graphblas);
+    delete_csr(csr);
     printf("Test Single-Source compare passed!\n\n");
 }
 
