@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
-    add_compile_options(-O3)
+    add_compile_options(-O3 -g)
     message(STATUS "Compiler optimization forced to: -O3")
 endif()
 
